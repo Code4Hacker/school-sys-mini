@@ -417,7 +417,7 @@ const StudentAdm = () => {
             <div className="dark_overlay" style={{
                 display: `${!sltction ? 'none' : 'block'}`
             }}>
-                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '15vw' }} onHide={() => setSlction(false)}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '11vw' }} onHide={() => setSlction(false)}>
                     <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
                     <div className="flex text-center align-middle">
                         {/* <div className=""></div> */}
@@ -515,7 +515,7 @@ const StudentAdm = () => {
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Courses"}
+                        headline={"Students"}
                         subheadline={""}
                         note={""}
                     />

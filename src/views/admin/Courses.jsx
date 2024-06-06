@@ -401,7 +401,7 @@ const Courses = () => {
             <div className="dark_overlay" style={{
                 display: `${!sltction ? 'none' : 'block'}`
             }}>
-                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '15vw' }} onHide={() => setSlction(false)}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '11vw' }} onHide={() => setSlction(false)}>
                     <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
                     <div className="flex text-center">
                         <div className=""></div>

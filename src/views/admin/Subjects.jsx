@@ -122,7 +122,7 @@ const Subjects = () => {
             }
             const requests = axios.request({
                 method: "GET",
-                url: `${baseURL}api/v1/sujects/all`,
+                url: `${baseURL}api/v1/subjects/all`,
                 headers: headersList
             });
             console.log((await requests).data);
@@ -293,7 +293,7 @@ const Subjects = () => {
 
             try {
                 const request = axios.request({
-                    url: `${baseURL}api/v1/sujects/new`,
+                    url: `${baseURL}api/v1/subjects/new`,
                     method: "POST",
                     data: bodydata,
                     headers: headersList
@@ -324,7 +324,7 @@ const Subjects = () => {
 
             try {
                 const request = axios.request({
-                    url: `${baseURL}api/v1/sujects/delete/${selected.uuid}`,
+                    url: `${baseURL}api/v1/subjects/delete/${selected.uuid}`,
                     method: "DELETE",
                     headers: headersList
                 });
@@ -401,7 +401,7 @@ const Subjects = () => {
             <div className="dark_overlay" style={{
                 display: `${!sltction ? 'none' : 'block'}`
             }}>
-                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '15vw' }} onHide={() => setSlction(false)}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '11vw' }} onHide={() => setSlction(false)}>
                     <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
                     <div className="flex text-center">
                         <div className=""></div>
@@ -499,7 +499,7 @@ const Subjects = () => {
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Courses"}
+                        headline={"Subjects"}
                         subheadline={""}
                         note={""}
                     />

@@ -349,7 +349,7 @@ const Dashboard = () => {
             <div className="dark_overlay" style={{
                 display: `${!sltction ? 'none' : 'block'}`
             }}>
-                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '18vw' }} onHide={() => setSlction(false)}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '13vw' }} onHide={() => setSlction(false)}>
                     <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
                     <div className="flex text-center">
                         <div className=""></div>
@@ -438,8 +438,8 @@ const Dashboard = () => {
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Place of Selection"}
-                        subheadline={"selections"}
+                        headline={"Departments"}
+                        subheadline={""}
                         note={""}
                     />
                     <div className="" style={{
