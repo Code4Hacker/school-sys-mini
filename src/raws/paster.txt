@@ -1,0 +1,28 @@
+const [Supervisors, setSupervisors] = useState([]);
+    const [selectedSupervisor, setSelectedSupervisor] = useState(null);
+    const [filteredSupervisors, setFilteredSupervisors] = useState(null);
+    
+    const search = (event) => {
+
+        setTimeout(() => {
+            let _filteredSupervisors;
+
+            if (!event.query.trim().length) {
+                _filteredSupervisors = [...Supervisors];
+            }
+            else {
+                _filteredSupervisors = Supervisors.filter((Supervisor) => {
+                    console.log("filtered", _filteredSupervisors)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
+
+            setFilteredSupervisors(_filteredSupervisors);
+        }, 250);
+
+ <AutoComplete className='auto_cp' field="name" value={selectedSupervisor} suggestions={filteredSupervisors} completeMethod={search} onChange={(e) => setSelectedSupervisor(e.value)} style={{
+                                border: "none !important"
+
+                            }} dropdown />
+
+

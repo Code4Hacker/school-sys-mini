@@ -1,0 +1,100 @@
+{
+    "projects": [
+        {
+            "sn": "1",
+            "name": "1. MOBILE HIV TREATMENT ADHERENCE SYSTEM",
+            "category": "Industrial Practical Training",
+            "domain": "Web Application",
+            "description": "MOBILE HIV TREATMENT ADHERENCE SYSTEM 1.Fname,Lname,Gender,Age, marital status, Residential area, password, birthdate 2.adim username and password",
+            "supervisor": "Miss. Liana",
+            "remarks": "Ensuring medication distribution hence patients register them inorder to get HIV medics in any hospital they will go at a time",
+            "students": [
+                {
+                    "student": "John Doe(T22-03-***)"
+                },
+                {
+                    "student": "Gemini Child(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                }
+            ],
+            "year":"2022/2023"
+        },
+        {
+            "sn": "2",
+            "name": "AFYA YA MAMA NA MTOTO",
+            "category": "Industrial Practical Training",
+            "domain": "Web Application",
+            "description": "OUR PROJECT TITLE IS AFYA MAMA NA MTOTO it deals with care of women pregnancy before giving birth and after giving birth of his or her baby . This website will take care of the pregnant women with several functionality -it will give a pregnant women an alert when time to take medicine is near or when the problem is such difficult to her. -it will give analytical graphical representation of the development of his or her baby and it will suggest which type of nutrition food to be taken out",
+            "supervisor": "Dr. Mwifunyi",
+            "remarks": "Ensuring medication distribution hence patients register them inorder to get HIV medics in any hospital they will go at a time",
+            "students": [
+                {
+                    "student": "John Doe(T22-03-***)"
+                },
+                {
+                    "student": "Gemini Child(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                }
+            ],
+            "year":"2022/2023"
+        },
+        {
+            "sn": "3",
+            "name": "AGRICULTURE SUPPLIERS AND RECORDS MANAGEMENT SYSTEM",
+            "category": "Industrial Practical Training",
+            "domain": "Web Application",
+            "description": "i)The system operates by connecting farmers,suppliers and Businessmen. ii)Farmers will provide the records about the capacity of crops in the harvesting season. iii)Suppliers will provide information about the availability of the crops in warehouse iv)Businessmen will study the condition of the records and determine the price of crops in the market. v)The system will include only the major cash crops and food crops.",
+            "supervisor": "Mr. Hassan",
+            "remarks": "THIS PROJECT IS GOING TO HELP JOINING TOGETHER THE FARMERS,SUPPLIERS AND THE BUSINESSMAN TOGETHER IN THEIR ACTIVITIES",
+            "students": [
+                {
+                    "student": "John Doe(T22-03-***)"
+                },
+                {
+                    "student": "Gemini Child(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                },
+                {
+                    "student": "Gemini Child(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                },
+                {
+                    "student": "Paulo Michael(T22-03-***)"
+                }
+            ],
+            "year":"2022/2023"
+        },
+        {
+            "sn": "4",
+            "name": "AUTOMATIC DUSTBIN",
+            "category": "Industrial Practical Training",
+            "domain": "Hardware System",
+            "description": "The smart dust bin, powered by Arduino, is equipped with sensors to identify objects in close proximity. A signal is then transmitted to a servo motor, which unhinges the lid. The motor is programmed to shut the lid after a certain duration.",
+            "supervisor": "Mr. Nasolwa",
+            "remarks": "The project is good because it solve the problem of unwanted wastes and simplify work.",
+            "students": [
+                {
+                    "student": "Gemini Child(T22-03-***)"
+                }
+            ],
+            "year":"2022/2023"
+        }
+    ]
+}

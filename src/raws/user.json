@@ -1,0 +1,39 @@
+{
+    "user": {
+        "about": {
+            "fullname": "paulo michael lukwaro",
+            "registration": "T22-03-10577",
+            "gender": "Male",
+            "mobile": "0628272363",
+            "email": "paulprogrammer947@gmail.com"
+        },
+        "academic": {
+            "college": {
+                "title": "cive",
+                "description": "college of information and virtual education"
+            },
+            "department": {
+                "title": "cse",
+                "description": "department of computer science and engineering"
+            },
+            "program": {
+                "title": "Bsc. CS1",
+                "description": "Bachelor of computer science"
+            }
+        },
+        "selection": [
+            {
+                "module":"Mobile Applications (Android App Dev)",
+                "session":"Afternoon",
+                "venue":"Lrb 004D",
+                "lab":"Not allocated"
+            },
+            {
+                "module":"JAVA Programming",
+                "session":"Morning",
+                "venue":"Lrb 005B",
+                "lab":"Not allocated"
+            }
+        ]
+    }
+}

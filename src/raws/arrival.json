@@ -1,0 +1,13 @@
+{
+    "arrival": {
+        "id":1,
+        "student":"Paulo Michael",
+        "t_number":"t22-03-10577",
+        "programme":"BSc. of CS 2",
+        "place":"Vodacom Internet Company",
+        "area":"Mawasiliano",
+        "region":"region data",
+        "district":"district",
+        "phone":"phone"
+    }
+}

@@ -1,0 +1,59 @@
+.flex_box {
+    display: grid;
+    position: relative;
+    width: 100%;
+    height: var(--height);
+    grid-template-columns: var(--width) var(--width-two);
+    row-gap: 10px;
+    .list_about>* {
+        margin-bottom: 20px;
+        font-size: small;
+    }
+
+    .button>* {
+        margin-right: 10px;
+    }
+
+    .jornal_list {
+        display: grid;
+        position: relative;
+        width: 100%;
+        grid-template-columns: 100px 10px auto;
+        gap: 10px;
+        .jt-title{
+            margin-top: 5px;
+            font-size: small;
+            margin-bottom: 30px;
+        }
+        .jt-line{
+            position: relative;
+            border-left: 4px solid var(--light);
+            border-right: 4px solid var(--light);
+            background-color: var(--meal-3);
+            .ball{
+                position: absolute;
+                top:5px;
+                height: 13px;
+                width: 13px;
+                border-radius: 50px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: var(--light);
+                border: 2px solid var(--ocean);
+            }
+        }
+        .jt-content{
+            margin-top: 5px;
+            font-size: small;
+            margin-bottom: 30px;
+            h4{
+                // margin-bottom: -2px;
+                font-size: medium;
+            }
+        }
+    }
+}
+.right-screen-view{
+    height: 100vh;
+    overflow-y: scroll;
+}

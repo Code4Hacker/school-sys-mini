@@ -1,0 +1,139 @@
+.studentprojects .dark_overla {
+    background: red !important;
+
+}
+.input.m-1{
+    span {
+        color: red;
+    }
+}
+.modal_box {
+    h4 {
+        font-size: small;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+   
+
+    .flex_2 {
+        display: flex;
+        width: 100%;
+        position: relative;
+        gap: 10px;
+
+        input,
+        .input {
+            position: relative;
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+
+    .mv_btn {
+        color: var(--light) !important;
+        background-color: var(--bold-ocean);
+        margin: 10px;
+
+        >* {
+            margin: 4px;
+        }
+    }
+
+    button {
+        background-color: none;
+        border-radius: 10px;
+        border: none;
+        padding: 10px;
+        padding-left: 20px;
+        text-align: center;
+    }
+
+    .p-autocomplete-multiple-container.p-component
+    {
+        width: 100%;
+        padding: 0px;
+        border-radius: 5px;
+        background: none;
+
+        // background-color: red;
+
+    }
+    input,
+    textarea,
+    .auto_cp,
+    select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: none;
+
+        // background-color: red;
+
+    }
+    .p-autocomplete-token-label{
+        color: var(--light) !important;
+        background-color: var(--muted);
+        padding: 5px;
+        width: 50px;
+        border-radius: 60px; 
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+    }
+    .sugges {
+        * {
+            background-color: var(--light) !important;
+        }
+    }
+
+}
+
+.p-autocomplete-item,
+.p-autocomplete-items-wrapper,
+.p-autocomplete-items {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    font-size: small !important;
+}
+
+.p-autocomplete-items-wrapper {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.135);
+    font-size: small !important;
+}
+
+.auto_cp {
+    padding: 0px !important;
+    border: none !important;
+    font-size: small !important;
+
+    * {
+        color: var(--dark);
+        font-size: small !important;
+    }
+
+    svg {
+        margin-left: 4px;
+        margin-top: 2px;
+    }
+}
+
+.p-autocomplete-dropdown {
+    background-color: var(--bold-ocean) !important;
+    padding-top: 10px !important;
+    // height: 48px;
+    margin-top: 8px;
+    margin-left: 5px;
+    font-size: small !important;
+    color: var(--light) !important;
+    padding-right: 50px !important;
+
+    * {
+        color: var(--light) !important;
+        font-size: small !important;
+    }
+}
