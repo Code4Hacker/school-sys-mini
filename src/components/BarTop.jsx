@@ -191,7 +191,7 @@ const BarTop = ({ username, menu, extras }) => {
                                     <img src={udom_logo} alt="" />
                                 </div>
                                 <div onClick={(e) => op.current.toggle(e)}>
-                                    <span>{storage.getItem("u_name") ? storage.getItem("u_name").split(" ")[0] : "Paulo"}(Student)</span>
+                                    <span>{storage.getItem("u_name") ? storage.getItem("u_name").split(" ")[0] : "Paulo"}</span>
                                 </div>
                                 <span className='icon-bg'><ArrowDown /></span>
                             </button>

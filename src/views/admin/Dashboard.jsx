@@ -73,64 +73,7 @@ const Dashboard = () => {
             setFilteredDomains(_filteredDomains);
         }, 250);
     }
-    const getModulesSuper = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}supervisor.php`
-            });
-            setSupervisors((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
-    const superchange = (e) => {
-        setSelectedSupervisor(e.value);
-    }
-    const handleSubmitSelection = async (event, id) => {
-        let forma = (new FormData());
-        forma.append("studentId", storage.getItem("std_usr"));
-        let bodydata = forma;
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}con_std.php`,
-                data: bodydata
-            });
-            const { academic, about, selection } = (await requests).data[0];
 
-            if (selection.length > 0) {
-                toast.error("Sorry, we see that your selection board is not empty... You can't add more!");
-
-            } else {
-                let newData = (new FormData());
-                newData.append("student", storage.getItem("std_usr"));
-                newData.append("selection", event.data.sn);
-
-
-                let bodydata = newData;
-                try {
-                    const requests = axios.request({
-                        method: "POST",
-                        url: `${baseURL}add_select.php`,
-                        data: bodydata
-                    });
-                    console.log((await requests).data);
-                    if ((await requests).data.status === 200) {
-                        toast.dismiss(id.id);
-                        toast.success("Selection Success");
-                        setTimeout(() => {
-                            toast.dismiss();
-                        }, 3000);
-                    } else { toast.error("Something went wrong, try again!"); }
-                } catch (error) {
-                    toast.error(`Something went wrong\n${error}`);
-                }
-            }
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
     const navigate = useNavigate();
     const onRowSelect = (event) => {
         jQuery("td").css({
@@ -144,17 +87,6 @@ const Dashboard = () => {
         setSlction(!false);
 
     };
-
-    const onRowUnselect = (event) => {
-        toast.error(`You've Unselect -> ${event.data.name}`);
-        jQuery("td").css({
-            "background-color": 'var(--light)'
-        })
-        jQuery(event.originalEvent.target).css({
-            "background-color": 'var(--alice)'
-        })
-
-    };
     const viewSubjects = () => {
         setSlction(false);
         navigate(parameters);
@@ -163,25 +95,31 @@ const Dashboard = () => {
     const dt = useRef(null);
 
     const cols = [
-        { field: 'sn', header: '#' },
-        { field: 'name', header: 'Department Name' },
+        { field: 'id', header: '#' },
+        { field: 'department', header: 'Department Name' },
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
     const getModulesDetails = async () => {
         try {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
             const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}adm_place.php`
-            }); setProject((await requests).data);
+                method: "GET",
+                url: `${baseURL}api/v1/departments/all`,
+                headers: headersList
+            });
+            console.log((await requests).data);
+            setProject((await requests).data.content);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
     }
     useEffect(() => {
         getModulesDetails();
-        getModulesDomain();
-        getModulesSuper();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -282,56 +220,80 @@ const Dashboard = () => {
 
         </div>
     );
-    const getModulesDomain = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}domains.php`
-            });
-            setDomains((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
     // inputs states
 
-    const [place_name, setPlace_name] = useState("");
+    const [depname, setDepname] = useState("");
     const [capacity, setCapacity] = useState("");
-    const [branch, setBranch] = useState("");
+    const [depcode, setDepcode] = useState("");
     const [area, setArea] = useState("");
     const [region, setRegion] = useState("");
     const [district, setDistrict] = useState("");
     const [contact, setContact] = useState("");
 
     const handleSubmit = async () => {
-        console.log(selectedSupervisor, selectedDomain);
-        if (place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null) {
+        // console.log(selectedSupervisor, selectedDomain);
+        if (depname !== "" && depcode !== "") {
             let formdata = new FormData();
-            formdata.append("place_name", place_name);
-            formdata.append("category", selectedDomain.name);
-            formdata.append("capacity", capacity);
-            formdata.append("branch", branch);
-            formdata.append("area", area);
-            formdata.append("region", region);
-            formdata.append("district", district);
-            formdata.append("contact", contact);
             if (selectedSupervisor !== null) {
                 formdata.append("supervisor", selectedSupervisor.super);
             }
-            const bodydata = formdata;
+            let bodyContent = JSON.stringify({
+                "department": depname,
+                "deptCode": depcode
+            });
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
 
             try {
                 const request = axios.request({
-                    url: `${baseURL}add_place.php`,
+                    url: `${baseURL}api/v1/departments/new`,
                     method: "POST",
-                    data: bodydata
+                    data: bodyContent,
+                    headers: headersList
                 });
-                if ((await request).data.status === 200) {
-                    toast.success("Place Added Successiful!");
+                if ((await request).data.code === 9000) {
+                    toast.success("Department Added Successiful!");
                     setVisible(false);
                     getModulesDetails();
-                    setPlace_name(""); setBranch(""); setCapacity(); setArea(""); setDistrict(""); setRegion("");
+                    setDepname(""); setDepcode(""); 
                 } else {
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
+    }
+    const handleDelete = async () => {
+        console.log(selected.uuid)
+        if (selected.id !== "") {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
+
+            try {
+                const request = axios.request({
+                    url: `${baseURL}api/v1/departments/delete/${selected.uuid}`,
+                    method: "DELETE",
+                    headers: headersList
+                });
+                if ((await request).data.code === 9000) {
+                    toast.success("Department Added Successiful!");
+                    setVisible(false);
+                    getModulesDetails();
+                    setDepname(""); setDepcode(""); 
+
+                    setSlction(false);
+                } else {
+                    console.log((await request).data)
                     toast.error("Something went wrong!");
                 }
             } catch (error) {
@@ -356,11 +318,21 @@ const Dashboard = () => {
                     }}>
                         CREATE DEPARTMENT
                     </h3>
-                    <div className="input m-1">
-                        <div className="span">
-                            <h4 className="text-muted page-title">Department Name <span>*</span></h4>
+                    <div className="flex_2">
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Department Name<span>*</span></h4>
+                            </div>
+                            <input type="text" value={depname} onChange={(e) => setDepname(e.target.value)} />
                         </div>
-                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Department Code<span>*</span></h4>
+                            </div>
+                            <input type="text" value={depcode} onChange={(e) => setDepcode(e.target.value)} />
+
+                        </div>
 
                     </div>
                     <div className="button text-center">
@@ -384,18 +356,15 @@ const Dashboard = () => {
                         <div className="button text-center">
                             <Button type="button" className=" btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                                 backgroundColor: 'red', height: '50px', fontWeight: 300, width: '180px', textAlign: 'center',
-                                color:'white',
-                                margin:'4px'
-                            }} onClick={() => {
-                                toast.success('deleted successiful!');
-                                setSlction(false);
-                            }}> <Trash3Fill />Delete Department</Button>
+                                color: 'white',
+                                margin: '4px'
+                            }} onClick={handleDelete}> <Trash3Fill />Delete Department</Button>
                         </div>
                         <div className="button text-center">
                             <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                                 backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '180px', textAlign: 'center',
-                                color:'white',
-                                margin:'4px'
+                                color: 'white',
+                                margin: '4px'
                             }} onClick={() => {
                                 setSlction(false);
                                 setUpdating(true);
@@ -433,7 +402,7 @@ const Dashboard = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Course Code<span>*</span></h4>
                             </div>
-                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
+                            <input type="text" value={depname} onChange={(e) => setDepname(e.target.value)} />
 
                         </div>
 

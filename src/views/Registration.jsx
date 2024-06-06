@@ -37,12 +37,17 @@ const Registration = () => {
         "username": username,
         "password": password
       });
-      
+      let headersList = {
+        "Accept": "*/*",
+        "Content-Type": "application/json"
+      }
       try {
         const checkingUser = await axios.request({
           url: `${baseURL}auth/login`,
           method: "POST",
           data: the_body,
+          headers: headersList
+
         });
         console.log(checkingUser.data);
         if (checkingUser.data.code === 9000) {
@@ -56,6 +61,7 @@ const Registration = () => {
               case "SUPER_ADMIN":
                 window.localStorage.setItem("admin", token);
                 window.localStorage.setItem("role", "admin");
+                window.localStorage.setItem("u_name", username);
                 setTimeout(() => {
                   toast.dismiss();
                   console.log(token)
