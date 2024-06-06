@@ -63,11 +63,12 @@ const Sidebar = () => {
                     "url": "/students",
                     "icon": <PeopleFill />,
                     "title": "Students"
-                },{
-                    "url": "/dashboard",
-                    "icon": <PeopleFill />,
-                    "title": "Enroll Student"
                 },
+                // {
+                //     "url": "/dashboard",
+                //     "icon": <PeopleFill />,
+                //     "title": "Enroll Student"
+                // },
                 ]
 
     // const params = useParams();

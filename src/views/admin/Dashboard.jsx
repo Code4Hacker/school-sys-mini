@@ -349,7 +349,7 @@ const Dashboard = () => {
             <div className="dark_overlay" style={{
                 display: `${!sltction ? 'none' : 'block'}`
             }}>
-                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '24vw' }} onHide={() => setSlction(false)}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '18vw' }} onHide={() => setSlction(false)}>
                     <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
                     <div className="flex text-center">
                         <div className=""></div>
@@ -360,7 +360,7 @@ const Dashboard = () => {
                                 margin: '4px'
                             }} onClick={handleDelete}> <Trash3Fill />Delete Department</Button>
                         </div>
-                        <div className="button text-center">
+                        {/* <div className="button text-center">
                             <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                                 backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '180px', textAlign: 'center',
                                 color: 'white',
@@ -369,7 +369,7 @@ const Dashboard = () => {
                                 setSlction(false);
                                 setUpdating(true);
                             }}> <PenFill />Update Department</Button>
-                        </div>
+                        </div> */}
                     </div>
                 </Dialog>
             </div>

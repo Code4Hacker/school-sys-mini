@@ -4,6 +4,7 @@ import { PrimeReactProvider } from 'primereact/api'
 import { Toaster } from 'react-hot-toast'
 import { Courses, Dashboard, StudentAdm, Subjects } from './views'
 import Registration from './views/Registration'
+import Slug from './subviews/IndividualStudent'
 
 const App = () => {
   return (
@@ -16,6 +17,8 @@ const App = () => {
           <Route path='/courses' element={<Courses />} />
           <Route path='/subjects' element={<Subjects />} />
           <Route path='/students' element={<StudentAdm />} />
+          <Route path='/selection_place/:id' element={<Slug />} />
+
         </Routes>
       </BrowserRouter>
     </PrimeReactProvider>

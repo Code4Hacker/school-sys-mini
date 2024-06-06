@@ -5,20 +5,18 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { CloudArrowUpFill, CloudPlusFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg, Watch } from 'react-bootstrap-icons';
+import { EyeFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, PenFill, Plus, PlusCircle, Trash3Fill } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
 import jQuery from 'jquery';
 import studentRaws from "../../raws/studentprojects.json";
 import { Dialog } from 'primereact/dialog';
-import { Divider } from 'primereact/divider';
 import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
-import { AutoComplete } from 'primereact/autocomplete';
-import { Chips } from "primereact/chips";
-import { useNavigate, useParams } from 'react-router-dom';
 import { udom_logo } from '../../assets';
+import { useNavigate } from 'react-router';
+import { AutoComplete } from 'primereact/autocomplete';
 
 const Subjects = () => {
     const [project, setProject] = useState([]);
@@ -26,81 +24,72 @@ const Subjects = () => {
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
+    const [sltction, setSlction] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [selectedDomain, setselectedDomain] = useState(null);
+    const [parameters, setParameters] = useState();
+
+    const [Domains, setDomains] = useState([]);
+    const [filteredDomains, setFilteredDomains] = useState(null);
     const storage = window.localStorage;
-    const handleSubmitSelection = async (event, id) => {
-        let formdata = new FormData();
-        const splitter = params.id.split("_13_");
-        formdata.append("place_name", splitter[3]);
-        formdata.append("branch", splitter[4]);
-        formdata.append("area", splitter[2]);
-        formdata.append("region", splitter[0]);
-        formdata.append("district", splitter[1]);
-        formdata.append("supervisor", event.data.super_id);
 
-        const bodydata = formdata;
-        try {
-            const requests = axios.request({
-                url: `${baseURL}add_place_supe.php`,
-                method: "POST",
-                data: bodydata
-            });
+    const [Supervisors, setSupervisors] = useState([]);
+    const [selectedSupervisor, setSelectedSupervisor] = useState(null);
+    const [filteredSupervisors, setFilteredSupervisors] = useState(null);
 
-            // console.log((await requests).data);
-            if((await requests).data.status === 200){
+    const search3 = (event) => {
 
-                toast.success("Updated Successiful, "+ (new Date()).toDateString());
-                getSupervisors();
-                getModulesDetails();
-                toast.dismiss();
-            } else{
-                toast.error("something went wrong!");
+        setTimeout(() => {
+            let _filteredSupervisors;
+
+            if (!event.query.trim().length) {
+                _filteredSupervisors = [...Supervisors];
             }
-        } catch (error) {
-            toast.error(error);
-        }
-        // console.log(splitter);
-    }
-    const onRowSelect = (event) => {
-        toast.custom((t) => (
-            <div
-                className={`${t.visible ? 'animate-enter' : 'animate-leave'
-                    } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-            >
-                <div className="flex-1 w-0 p-4">
-                    <div className="flex items-start">
-                        <div className="flex-shrink-0 pt-0.5">
-                            <img
-                                className="h-10 w-10 rounded-full"
-                                src={udom_logo}
-                                alt=""
-                            />
-                        </div>
-                        <div className="ml-3 flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                                {storage.getItem("u_name") ? storage.getItem("u_name") : "Paulo Michael"}
-                            </p>
-                            <p className="mt-1 text-sm text-gray-500">
-                                Are you Sure! Do you  wan't to select
-                                <div className="">
-                                    Name: <span className=" text-indigo-500">{event.data.name}</span>, Category: <span className=" text-indigo-500">{event.data.category}</span> at
-                                    <br />
-                                    <span className=" ">{event.data.region}</span>  <span className=" ">[{event.data.supervisor}]</span>
+            else {
+                _filteredSupervisors = Supervisors.filter((Supervisor) => {
+                    console.log("filtered", _filteredSupervisors)
+                    return Supervisor.department.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
 
-                                </div>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex border-l border-gray-200">
-                    <button
-                        onClick={() => handleSubmitSelection(event, t)}
-                        className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                        Accept
-                    </button>
-                </div>
-            </div>
-        ), { duration: 10000 })
+            setFilteredSupervisors(_filteredSupervisors);
+        }, 250);
+    }
+    const search2 = (event) => {
+
+        setTimeout(() => {
+            let _filteredDomains;
+
+            if (!event.query.trim().length) {
+                _filteredDomains = [...Domains];
+            }
+            else {
+                _filteredDomains = Domains.filter((Supervisor) => {
+                    console.log("filtered", _filteredDomains)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
+
+            setFilteredDomains(_filteredDomains);
+            setFilteredSupervisors(_filteredDomains);
+        }, 250);
+    }
+    const navigate = useNavigate();
+    const onRowSelect = (event) => {
+        jQuery("td").css({
+            "background-color": 'var(--light)'
+        })
+        jQuery(event.originalEvent.target).css({
+            "background-color": 'var(--alice)'
+        })
+        // navigate(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setParameters(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setSlction(!false);
+
+    };
+
+    const onRowUnselect = (event) => {
+        toast.error(`You've Unselect -> ${event.data.name}`);
         jQuery("td").css({
             "background-color": 'var(--light)'
         })
@@ -109,44 +98,48 @@ const Subjects = () => {
         })
 
     };
-    const dt = React.forwardRef(null);
+    const viewSubjects = () => {
+        setSlction(false);
+        navigate(parameters);
+
+    }
+    const dt = useRef(null);
 
     const cols = [
-        { field: 'sn', header: '#' },
-        { field: 'name', header: 'Supervisor Name' },
-        { field: 'department', header: 'Department' },
-        { field: 'super_id', header: 'Supervisor ID' },
-        { field: 'mobile', header: 'Mobile' },
-        { field: 'location', header: 'Location' },
-        { field: 'some', header: 'Already Selected at' }
-
+        { field: 'id', header: '#' },
+        { field: 'course.courseName', header: 'Course Name' },
+        { field: 'subjectCode', header: 'Subject Code' },
+        { field: 'subjectName', header: 'Subject Name' }
     ];
-    const params = useParams();
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
+
     const getModulesDetails = async () => {
-        let formadata = new FormData();
-        formadata.append("location", params.id.split("_13_")[0].trim());
-        const bodydata = formadata;
         try {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
             const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}supervisors.php`,
-                data: bodydata
-            }); setProject((await requests).data);
+                method: "GET",
+                url: `${baseURL}api/v1/sujects/all`,
+                headers: headersList
+            });
             console.log((await requests).data);
+            setProject((await requests).data.content);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
     }
     useEffect(() => {
         getModulesDetails();
+        getModulesDomain();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const exportCSV = (selectionOnly) => {
         dt.current.exportCSV({ selectionOnly });
     };
-
     const exportPdf = () => {
         import('jspdf').then((jsPDF) => {
             import('jspdf-autotable').then(() => {
@@ -226,7 +219,9 @@ const Subjects = () => {
             <div className="flex justify-content-between">
 
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
-
+                <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
+                    backgroundColor: 'var(--ocean)', height: '45px'
+                }}><Plus /> Add Subject</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -238,111 +233,290 @@ const Subjects = () => {
 
         </div>
     );
-    const [sselected, setSselected] = useState();
-
-    const getSupervisors = async () => {
-        let formdata = new FormData();
-        const splitter = params.id.split("_13_");
-        formdata.append("place_name", splitter[3]);
-        formdata.append("branch", splitter[4]);
-        formdata.append("area", splitter[2]);
-        formdata.append("region", splitter[0]);
-        formdata.append("district", splitter[1]);
-
-        const bodydata = formdata;
+    const getModulesDomain = async () => {
         try {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
             const requests = axios.request({
-                url: `${baseURL}check_super.php`,
-                method: "POST",
-                data: bodydata
+                method: "GET",
+                url: `${baseURL}api/v1/courses/all`,
+                headers: headersList
             });
+            console.log((await requests).data);
+            let arr = [];
+            for (let index = 0; index < (await requests).data.content.length; index++) {
+                const obj = {
+                    name: (await requests).data.content[index].courseName,
+                    uuid:(await requests).data.content[index].uuid
+                }
 
-            // console.log((await requests).data);
-            setSselected((await requests).data);
+                arr.push(obj);
+            }
+
+            setDomains(arr);
         } catch (error) {
-            toast.error(error);
+            toast.error(`Something went wrong\n${error}`);
         }
-        // console.log(splitter);
     }
-    useEffect(() => { getSupervisors() }, []);
+    // inputs states
+
+    const [place_name, setPlace_name] = useState("");
+    const [capacity, setCapacity] = useState("");
+    const [branch, setBranch] = useState("");
+    const [area, setArea] = useState("");
+    const [region, setRegion] = useState("");
+    const [district, setDistrict] = useState("");
+    const [contact, setContact] = useState("");
+
+    
+    const handleSubmit = async () => {
+        // console.log(selectedSupervisor, selectedDomain);
+        if (branch !== "" && place_name !== "" && selectedDomain.uuid !=="") {
+            let formdata = new FormData();
+            if (selectedSupervisor !== null) {
+                formdata.append("supervisor", selectedSupervisor.super);
+            }
+            
+            const bodydata = JSON.stringify({
+                "subjectName":place_name,
+                "subjectCode":branch,
+                "courseUuid":selectedDomain.uuid
+              });
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
+
+            try {
+                const request = axios.request({
+                    url: `${baseURL}api/v1/sujects/new`,
+                    method: "POST",
+                    data: bodydata,
+                    headers: headersList
+                });
+                if ((await request).data.code === 9000) {
+                    toast.success("Subjects Added Successiful!");
+                    setVisible(false);
+                    getModulesDetails();
+                } else {
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+                toast.error(error)
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
+    }
+    const handleDelete = async () => {
+        console.log(selected.uuid)
+        if (selected.id !== "") {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
+
+            try {
+                const request = axios.request({
+                    url: `${baseURL}api/v1/sujects/delete/${selected.uuid}`,
+                    method: "DELETE",
+                    headers: headersList
+                });
+                if ((await request).data.code === 9000) {
+                    toast.success("Department Added Successiful!");
+                    setVisible(false);
+                    getModulesDetails();
+
+                    setSlction(false);
+                } else {
+                    console.log((await request).data)
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
+    }
     return (
-        <div className='view user_board'>
+        <div className='view user_board studentprojects'>
+            <Toaster ref={toast} position='top-right' color='white' />
+            {/* creating */}
+            <div className="dark_overlay" style={{
+                display: `${!visible ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
+                    <h3 className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        ADD SUBJECT
+                    </h3>
+                    <div className="flex_2">
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Course Name <span>*</span></h4>
+                            </div>
+                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
+                                border: "none !important"
+
+                            }} dropdown />
+                        </div>
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Subject Code<span>*</span></h4>
+                            </div>
+                            <input type="text" value={branch} onChange={(e) => setBranch(e.target.value)} />
+
+                        </div>
+
+                    </div>
+                    <div className="input m-1">
+                        <div className="span">
+                            <h4 className="text-muted page-title">Subject Name <span>*</span></h4>
+                        </div>
+                        <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
+
+                    </div>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
+                    </div>
+                </Dialog>
+            </div>
+
+            {/* done creating */}
+
+            {/*selection */}
+            <div className="dark_overlay" style={{
+                display: `${!sltction ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '15vw' }} onHide={() => setSlction(false)}>
+                    <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
+                    <div className="flex text-center">
+                        <div className=""></div>
+                        <div className="button text-center">
+                            <Button type="button" className=" btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'red', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color: 'white',
+                                margin: '4px'
+                            }} onClick={handleDelete}> <Trash3Fill />Delete Subject</Button>
+                        </div>
+                        {/* <div className="button text-center">
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color: 'white',
+                                margin: '4px'
+                            }} onClick={() => {
+                                setSlction(false);
+                                setUpdating(true);
+                            }}> <PenFill />Update Course</Button>
+                        </div>
+                        <div className="button text-center" style={{
+                            color: 'red !important',
+                        }}>
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--green)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color: 'white',
+                                margin: '4px'
+                            }} onClick={viewSubjects}> <EyeFill /> View Subjects</Button>
+                        </div> */}
+                    </div>
+                </Dialog>
+            </div>
+            {/* done selection */}
+
+
+            {/* creating */}
+            <div className="dark_overlay" style={{
+                display: `${!updating ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={updating} style={{ width: '45vw' }} onHide={() => setUpdating(false)}>
+                    <h3 className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        UPDATE COURSE
+                    </h3>
+                    <div className="flex_2">
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Department <span>*</span></h4>
+                            </div>
+                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
+                                border: "none !important"
+
+                            }} dropdown />
+                        </div>
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
+                            </div>
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
+
+                        </div>
+
+                    </div>
+                    <div className="input m-1">
+                        <div className="span">
+                            <h4 className="text-muted page-title">Course Name <span>*</span></h4>
+                        </div>
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
+                    </div>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
+                    </div>
+                </Dialog>
+            </div>
+
+            {/* done creating */}
+
+
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
-                <div className="left-screen-view">
+
+                <div className="left-screen-view" style={{
+                    position: 'relative',
+                    zIndex: "50"
+                }}>
                     <Sidebar />
                 </div>
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Welcome to Academic Year"}
-                        subheadline={"PSupervisor"}
-                        note={"2022/2023"}
+                        headline={"Courses"}
+                        subheadline={""}
+                        note={""}
                     />
                     <div className="" style={{
                         paddingTop: '20px'
                     }}>
                         <div className="border_box" style={{
-                            paddingLeft: '0px'
+                            paddingLeft: '10px'
                         }}>
-                            <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
-                                <div
-                                    className="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
-                                    aria-hidden="true"
-                                >
-                                    <div
-                                        className="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
-                                        style={{
-                                            clipPath:
-                                                'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
-                                        }}
-                                    />
-                                </div>
-                                <div
-                                    className="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
-                                    aria-hidden="true"
-                                >
-                                    <div
-                                        className="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
-                                        style={{
-                                            clipPath:
-                                                'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                    <p className="text-sm leading-6 text-gray-900">
-                                        <strong className="font-semibold">Selected Supervisor</strong>
-                                        <svg viewBox="0 0 2 2" className="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true">
-                                            <circle cx={1} cy={1} r={1} />
-                                        </svg>
-                                        {sselected !== undefined && sselected.supervisor?.length > 0 ? sselected.supervisor.map((data, key) => <span key={key}>{data.f_name} {data.m_name} {data.l_name}</span>) : " No selected Supervisor"}
-                                        {console.log(sselected)}
-                                    </p>
-                                    {/* {sselected !== undefined && sselected.supervisor?.length > 0 ? <button
-                                        href="#"
-                                        className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
-                                    >
-                                        Remove Supervisor <span aria-hidden="true">&rarr;</span>
-                                    </button> : ""} */}
-
-                                </div>
-                                <div className="flex flex-1 justify-end">
-                                    <button type="button" className="-m-3 p-3 focus-visible:outline-offset-[-4px]">
-                                        <span className="sr-only">Dismiss</span>
-                                        {/* <Watch className="h-5 w-5 text-gray-900" aria-hidden="true" /> */}
-                                    </button>
-                                </div>
-                            </div>
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
 
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'department', 'super_id', 'mobile', 'location', 'some']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Supervisor Yet." header={header}
+                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor', 'remarks', 'students', 'year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
                                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
+                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
-                                    {cols.map((col, key) => (
+                                    {cols.map((col) => (
                                         <Column key={col.field} className="border_box p-4" style={{ borderColor: "var(--dark) !important" }} sortable field={col.field} header={col.header} />
                                     ))}
                                 </DataTable>

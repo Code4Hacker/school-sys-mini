@@ -48,7 +48,7 @@ const StudentAdm = () => {
             else {
                 _filteredSupervisors = Supervisors.filter((Supervisor) => {
                     console.log("filtered", _filteredSupervisors)
-                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                    return Supervisor.department.toLowerCase().includes(event.query.toLowerCase());
                 });
             }
 
@@ -65,71 +65,14 @@ const StudentAdm = () => {
             }
             else {
                 _filteredDomains = Domains.filter((Supervisor) => {
-                    // console.log("filtered", _filteredDomains)
+                    console.log("filtered", _filteredDomains)
                     return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
                 });
             }
 
             setFilteredDomains(_filteredDomains);
+            setFilteredSupervisors(_filteredDomains);
         }, 250);
-    }
-    const getModulesSuper = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}supervisor.php`
-            });
-            setSupervisors((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
-    const superchange = (e) => {
-        setSelectedSupervisor(e.value);
-    }
-    const handleSubmitSelection = async (event, id) => {
-        let forma = (new FormData());
-        forma.append("studentId", storage.getItem("std_usr"));
-        let bodydata = forma;
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}con_std.php`,
-                data: bodydata
-            });
-            const { academic, about, selection } = (await requests).data[0];
-
-            if (selection.length > 0) {
-                toast.error("Sorry, we see that your selection board is not empty... You can't add more!");
-
-            } else {
-                let newData = (new FormData());
-                newData.append("student", storage.getItem("std_usr"));
-                newData.append("selection", event.data.sn);
-
-
-                let bodydata = newData;
-                try {
-                    const requests = axios.request({
-                        method: "POST",
-                        url: `${baseURL}add_select.php`,
-                        data: bodydata
-                    });
-                    console.log((await requests).data);
-                    if ((await requests).data.status === 200) {
-                        toast.dismiss(id.id);
-                        toast.success("Selection Success");
-                        setTimeout(() => {
-                            toast.dismiss();
-                        }, 3000);
-                    } else { toast.error("Something went wrong, try again!"); }
-                } catch (error) {
-                    toast.error(`Something went wrong\n${error}`);
-                }
-            }
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
     }
     const navigate = useNavigate();
     const onRowSelect = (event) => {
@@ -164,18 +107,28 @@ const StudentAdm = () => {
 
     const cols = [
         { field: 'sn', header: '#' },
-        { field: 'name', header: 'Department' },
-        { field: 'category', header: 'Course Code' },
-        { field: 'domain', header: 'Course Name' }
+        { field: 'firstname', header: 'First Name' },
+        { field: 'lastname', header: 'Last Name' },
+        { field: 'gender', header: 'Gender' },
+        { field: 'age', header: 'age' },
+        { field: 'course.courseName', header: 'Enrolled Course' },
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
     const getModulesDetails = async () => {
         try {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
             const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}adm_place.php`
-            }); setProject((await requests).data);
+                method: "GET",
+                url: `${baseURL}api/v1/students/all`,
+                headers: headersList
+            });
+            console.log((await requests).data);
+            setProject((await requests).data.content);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -183,14 +136,12 @@ const StudentAdm = () => {
     useEffect(() => {
         getModulesDetails();
         getModulesDomain();
-        getModulesSuper();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const exportCSV = (selectionOnly) => {
         dt.current.exportCSV({ selectionOnly });
     };
-
     const exportPdf = () => {
         import('jspdf').then((jsPDF) => {
             import('jspdf-autotable').then(() => {
@@ -272,7 +223,7 @@ const StudentAdm = () => {
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
                 <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> New Student</Button>
+                }}><Plus /> Add  New Student</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -286,54 +237,103 @@ const StudentAdm = () => {
     );
     const getModulesDomain = async () => {
         try {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
             const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}domains.php`
+                method: "GET",
+                url: `${baseURL}api/v1/courses/all`,
+                headers: headersList
             });
-            setDomains((await requests).data);
+            console.log((await requests).data);
+            let arr = [];
+            for (let index = 0; index < (await requests).data.content.length; index++) {
+                const obj = {
+                    name: (await requests).data.content[index].courseName,
+                    uuid: (await requests).data.content[index].uuid
+                }
+
+                arr.push(obj);
+            }
+
+            setDomains(arr);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
     }
     // inputs states
 
-    const [place_name, setPlace_name] = useState("");
-    const [capacity, setCapacity] = useState("");
-    const [branch, setBranch] = useState("");
-    const [area, setArea] = useState("");
-    const [region, setRegion] = useState("");
-    const [district, setDistrict] = useState("");
-    const [contact, setContact] = useState("");
+    const [firstname, setFirstname] = useState("");
+    const [gender, setGender] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [age, setAge] = useState("");
+
 
     const handleSubmit = async () => {
-        console.log(selectedSupervisor, selectedDomain);
-        if (place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null) {
-            let formdata = new FormData();
-            formdata.append("place_name", place_name);
-            formdata.append("category", selectedDomain.name);
-            formdata.append("capacity", capacity);
-            formdata.append("branch", branch);
-            formdata.append("area", area);
-            formdata.append("region", region);
-            formdata.append("district", district);
-            formdata.append("contact", contact);
-            if (selectedSupervisor !== null) {
-                formdata.append("supervisor", selectedSupervisor.super);
+        // console.log(selectedSupervisor, selectedDomain);
+        if (lastname !== "" && firstname !== "" && selectedDomain.uuid !== "") {
+
+            const bodydata = JSON.stringify({
+                "firstname": firstname,
+                "lastname": lastname,
+                "gender": gender,
+                "age": age,
+                "courseUuid": selectedDomain.uuid,
+            });
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
             }
-            const bodydata = formdata;
 
             try {
                 const request = axios.request({
-                    url: `${baseURL}add_place.php`,
+                    url: `${baseURL}api/v1/students/add`,
                     method: "POST",
-                    data: bodydata
+                    data: bodydata,
+                    headers: headersList
                 });
-                if ((await request).data.status === 200) {
-                    toast.success("Place Added Successiful!");
+                if ((await request).data.code === 9000) {
+                    toast.success("Course Added Successiful!");
+                    setVisible(false);
+                    setGender("");setAge(""); setFirstname(""); setLastname("");
+                    getModulesDetails();
+                } else {
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+                toast.error(error)
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
+    }
+    const handleDelete = async () => {
+        console.log(selected.uuid)
+        if (selected.id !== "") {
+            let headersList = {
+                "Accept": "*/*",
+                "Authorization": `Bearer ${localStorage.getItem('admin') !== undefined ? localStorage.admin : 'null'}`,
+                "Content-Type": "application/json"
+            }
+
+            try {
+                const request = axios.request({
+                    url: `${baseURL}api/v1/students/delete/${selected.uuid}`,
+                    method: "DELETE",
+                    headers: headersList
+                });
+                if ((await request).data.code === 9000) {
+                    toast.success("Department Added Successiful!");
                     setVisible(false);
                     getModulesDetails();
-                    setPlace_name(""); setBranch(""); setCapacity(); setArea(""); setDistrict(""); setRegion("");
+
+                    setSlction(false);
                 } else {
+                    console.log((await request).data)
                     toast.error("Something went wrong!");
                 }
             } catch (error) {
@@ -356,24 +356,39 @@ const StudentAdm = () => {
                         borderBottom: '1.5px solid var(--shadow_color)',
                         paddingBottom: '10px'
                     }}>
-                        CREATE COURSE
+                        NEW  STUDENT
                     </h3>
                     <div className="flex_2">
 
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Department <span>*</span></h4>
+                                <h4 className="text-muted page-title">First Name <span>*</span></h4>
                             </div>
-                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
-                                border: "none !important"
-
-                            }} dropdown />
+                            <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} />
                         </div>
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
+                                <h4 className="text-muted page-title">Last Name<span>*</span></h4>
                             </div>
-                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
+                            <input type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} />
+
+                        </div>
+
+                    </div>
+                    <div className="flex_2">
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Gender <span>*</span></h4>
+                            </div>
+
+                            <input type="text" value={gender} onChange={(e) => setGender(e.target.value)} />
+                        </div>
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Student Age<span>*</span></h4>
+                            </div>
+                            <input type="text" value={age} onChange={(e) => setAge(e.target.value)} />
 
                         </div>
 
@@ -382,7 +397,10 @@ const StudentAdm = () => {
                         <div className="span">
                             <h4 className="text-muted page-title">Course Name <span>*</span></h4>
                         </div>
-                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+                        <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
+                            border: "none !important"
+
+                        }} dropdown />
 
                     </div>
                     <div className="button text-center">
@@ -399,39 +417,36 @@ const StudentAdm = () => {
             <div className="dark_overlay" style={{
                 display: `${!sltction ? 'none' : 'block'}`
             }}>
-                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '30vw' }} onHide={() => setSlction(false)}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '15vw' }} onHide={() => setSlction(false)}>
                     <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
-                    <div className="flex text-center">
-                        <div className=""></div>
+                    <div className="flex text-center align-middle">
+                        {/* <div className=""></div> */}
                         <div className="button text-center">
                             <Button type="button" className=" btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                                 backgroundColor: 'red', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
-                                color:'white',
-                                margin:'4px'
-                            }} onClick={() => {
-                                toast.success('deleted successiful!');
-                                setSlction(false);
-                            }}> <Trash3Fill />Delete Course</Button>
+                                color: 'white',
+                                margin: '4px'
+                            }} onClick={handleDelete}> <Trash3Fill />Remove Student</Button>
                         </div>
-                        <div className="button text-center">
+                        {/* <div className="button text-center">
                             <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                                 backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
-                                color:'white',
-                                margin:'4px'
+                                color: 'white',
+                                margin: '4px'
                             }} onClick={() => {
                                 setSlction(false);
                                 setUpdating(true);
                             }}> <PenFill />Update Course</Button>
                         </div>
                         <div className="button text-center" style={{
-                            color:'red !important',
+                            color: 'red !important',
                         }}>
                             <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                                 backgroundColor: 'var(--green)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
-                                color:'white',
-                                margin:'4px'
+                                color: 'white',
+                                margin: '4px'
                             }} onClick={viewSubjects}> <EyeFill /> View Subjects</Button>
-                        </div>
+                        </div> */}
                     </div>
                 </Dialog>
             </div>
@@ -439,7 +454,7 @@ const StudentAdm = () => {
 
 
             {/* creating */}
-            <div className="dark_overlay" style={{
+            {/* <div className="dark_overlay" style={{
                 display: `${!updating ? 'none' : 'block'}`
             }}>
                 <Dialog header="" className='white_box modal_box' visible={updating} style={{ width: '45vw' }} onHide={() => setUpdating(false)}>
@@ -464,7 +479,7 @@ const StudentAdm = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Course Code<span>*</span></h4>
                             </div>
-                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
+                            <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} />
 
                         </div>
 
@@ -482,7 +497,7 @@ const StudentAdm = () => {
                         }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
                     </div>
                 </Dialog>
-            </div>
+            </div> */}
 
             {/* done creating */}
 
@@ -500,8 +515,8 @@ const StudentAdm = () => {
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Place of Selection"}
-                        subheadline={"selections"}
+                        headline={"Courses"}
+                        subheadline={""}
                         note={""}
                     />
                     <div className="" style={{
