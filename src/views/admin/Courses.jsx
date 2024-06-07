@@ -17,6 +17,7 @@ import { baseURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
 import { useNavigate } from 'react-router';
 import { AutoComplete } from 'primereact/autocomplete';
+import { Placeholder } from 'rsuite';
 
 const Courses = () => {
     const [project, setProject] = useState([]);
@@ -509,18 +510,29 @@ const Courses = () => {
                         <div className="border_box" style={{
                             paddingLeft: '10px'
                         }}>
-                            <div className="data_table">
-                                <Tooltip target=".export-buttons>button" position="bottom" />
+                            {
+                                project?.length > 0 ?
+                                    <div className="data_table">
+                                        <Tooltip target=".export-buttons>button" position="bottom" />
 
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor', 'remarks', 'students', 'year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
-                                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
-                                    onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
-                                    {cols.map((col) => (
-                                        <Column key={col.field} className="border_box p-4" style={{ borderColor: "var(--dark) !important" }} sortable field={col.field} header={col.header} />
-                                    ))}
-                                </DataTable>
-                            </div>
+                                        <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['id', 'department.department', 'courseCode', 'courseName']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Course found."
+                                            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                                            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
+                                            onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
+                                            {cols.map((col) => (
+                                                <Column key={col.field} className="border_box p-4" style={{ borderColor: "var(--dark) !important" }} sortable field={col.field} header={col.header} />
+                                            ))}
+                                        </DataTable>
+                                    </div> :
+                                    <div style={{
+                                        margin:'20px',
+                                        marginTop:'50px'
+                                    }}>
+                                        <Placeholder.Paragraph graph="circle" active className='mt-5 mb-5' />
+                                        <Placeholder.Grid rows={5} columns={6} active />
+                                        <Placeholder.Paragraph graph="circle" active className='mt-5 mb-5' />
+                                    </div>
+                            }
                         </div>
                     </div>
                 </div>
