@@ -115,6 +115,7 @@ const Dashboard = () => {
             });
             console.log((await requests).data);
             setProject((await requests).data.content);
+            setLoader(true);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -230,6 +231,7 @@ const Dashboard = () => {
     const [region, setRegion] = useState("");
     const [district, setDistrict] = useState("");
     const [contact, setContact] = useState("");
+    const [loader, setLoader] = useState(false);
 
     const handleSubmit = async () => {
         // console.log(selectedSupervisor, selectedDomain);
@@ -450,7 +452,7 @@ const Dashboard = () => {
                             paddingLeft: '10px'
                         }}>
                             {
-                                project?.length < 0 ?
+                                loader ?
                                 <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
 

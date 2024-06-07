@@ -23,6 +23,7 @@ const Subjects = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
+    const [loader, setLoader] = useState(false);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
     const [sltction, setSlction] = useState(false);
@@ -128,6 +129,7 @@ const Subjects = () => {
             });
             console.log((await requests).data);
             setProject((await requests).data.content);
+            setLoader(true)
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -511,7 +513,7 @@ const Subjects = () => {
                             paddingLeft: '10px'
                         }}>
                             {
-                                project?.length > 0 ?
+                                loader ?
                                     <div className="data_table">
                                         <Tooltip target=".export-buttons>button" position="bottom" />
 

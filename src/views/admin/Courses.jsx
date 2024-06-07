@@ -20,6 +20,7 @@ import { AutoComplete } from 'primereact/autocomplete';
 import { Placeholder } from 'rsuite';
 
 const Courses = () => {
+    const [loader, setLoader] = useState(false);
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
@@ -128,6 +129,7 @@ const Courses = () => {
             });
             console.log((await requests).data);
             setProject((await requests).data.content);
+            setLoader(!false);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -511,7 +513,7 @@ const Courses = () => {
                             paddingLeft: '10px'
                         }}>
                             {
-                                project?.length > 0 ?
+                                loader ?
                                     <div className="data_table">
                                         <Tooltip target=".export-buttons>button" position="bottom" />
 

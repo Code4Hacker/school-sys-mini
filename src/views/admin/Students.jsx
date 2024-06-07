@@ -30,6 +30,7 @@ const StudentAdm = () => {
     const [selectedDomain, setselectedDomain] = useState(null);
     const [parameters, setParameters] = useState();
 
+    const [loader, setLoader] = useState(false);
     const [Domains, setDomains] = useState([]);
     const [filteredDomains, setFilteredDomains] = useState(null);
     const storage = window.localStorage;
@@ -130,6 +131,7 @@ const StudentAdm = () => {
             });
             console.log((await requests).data);
             setProject((await requests).data.content);
+            setLoader(true)
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -527,7 +529,7 @@ const StudentAdm = () => {
                             paddingLeft: '10px'
                         }}>
                             {
-                                project?.length > 0 ?
+                                loader ?
                                     <div className="data_table">
                                         <Tooltip target=".export-buttons>button" position="bottom" />
 
